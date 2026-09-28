@@ -10,23 +10,23 @@ export default function Welcome() {
   return (
     <View style={styles.container}>
       <View style={styles.content}>
-        <Image 
-          source={require('../assets/branding/logo.png')} 
-          style={styles.logo} 
+        <Image
+          source={require('../assets/branding/logo.png')}
+          style={styles.logo}
           resizeMode="contain"
         />
-        <Text style={styles.subtitle}>Premium Electrical Commerce</Text>
+        <Text style={styles.subtitle}>Bhairahawa Light House Electrical Commerce</Text>
       </View>
-      
+
       <View style={styles.footer}>
-        <Button 
-          title="Login" 
-          onPress={() => router.push('/(auth)/login')} 
+        <Button
+          title="Login"
+          onPress={() => router.push('/(auth)/login')}
         />
-        <Button 
-          title="Create Account" 
-          variant="secondary" 
-          onPress={() => router.push('/(auth)/register')} 
+        <Button
+          title="Create Account"
+          variant="secondary"
+          onPress={() => router.push('/(auth)/register')}
         />
       </View>
     </View>
