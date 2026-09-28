@@ -53,15 +53,15 @@ export default function Login() {
     >
       <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
         
-        <Animated.View entering={FadeInUp.delay(100).springify()} style={styles.logoContainer}>
-          <Image 
-            source={require('../../assets/branding/logo.png')} 
-            style={styles.logo} 
-            resizeMode="contain"
-          />
-        </Animated.View>
-
         <Animated.View entering={FadeInDown.delay(200).springify()} style={styles.card}>
+          <Animated.View entering={FadeInUp.delay(100).springify()} style={styles.logoContainer}>
+            <Image 
+              source={require('../../assets/branding/logo.png')} 
+              style={styles.logo} 
+              resizeMode="contain"
+            />
+          </Animated.View>
+
           <View style={styles.header}>
             <Text style={styles.title}>Welcome Back</Text>
             <Text style={styles.subtitle}>Sign in to continue to Bhairahawa Light House.</Text>
@@ -136,12 +136,11 @@ const styles = StyleSheet.create({
   scroll: {
     flexGrow: 1,
     padding: spacing.lg,
-    justifyContent: 'center',
+    paddingVertical: spacing.xxl,
   },
   logoContainer: {
     alignItems: 'center',
-    marginBottom: spacing.xl,
-    marginTop: spacing.xxl,
+    marginBottom: spacing.md,
   },
   logo: {
     width: 120,
