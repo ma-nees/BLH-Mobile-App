@@ -46,7 +46,7 @@ export default function Invoice() {
           <style>
             body { font-family: 'Helvetica Neue', 'Helvetica', Arial, sans-serif; padding: 40px; color: #111827; }
             .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 40px; border-bottom: 2px solid #F3F4F6; padding-bottom: 20px; }
-            .brand h1 { margin: 0; color: #2563EB; font-size: 28px; }
+            .brand h1 { margin: 0; color: #000000ff; font-size: 28px; }
             .brand p { margin: 4px 0 0; color: #6B7280; font-size: 14px; }
             .inv-details { text-align: right; }
             .inv-details h2 { margin: 0; color: #111827; font-size: 24px; text-transform: uppercase; }
@@ -71,7 +71,7 @@ export default function Invoice() {
         <body>
           <div class="header">
             <div class="brand">
-              <img src="${logoUri}" style="width: 36px; height: 36px; margin-bottom: 8px; border-radius: 6px;" />
+              <img src="${logoUri}" style="width: 120px; height: auto; margin-bottom: 12px; object-fit: contain;" />
               <h1>Bhairahawa Light House - Wholesale</h1>
               <p>Milan Chowk, Bhairahawa, Nepal</p>
               <p>+977 980-0000000</p>

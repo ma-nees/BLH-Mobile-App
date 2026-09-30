@@ -71,7 +71,7 @@ export default function Invoice() {
         <body>
           <div class="header">
             <div class="brand">
-              <img src="${logoUri}" style="width: 36px; height: 36px; margin-bottom: 8px; border-radius: 6px;" />
+              <img src="${logoUri}" style="width: 120px; height: auto; margin-bottom: 12px; object-fit: contain;" />
               <h1>Bhairahawa Light House</h1>
               <p>Milan Chowk, Bhairahawa, Nepal</p>
               <p>+977 980-0000000</p>
