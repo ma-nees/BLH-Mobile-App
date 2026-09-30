@@ -8,20 +8,20 @@ import { useOrders } from '../../src/store/orderStore';
 
 const TOP = Platform.OS === 'android' ? (StatusBar.currentHeight ?? 24) : 44;
 
-export default function OrderHistory() {
+export default function StoreOrders() {
   const router = useRouter();
   const allOrders = useOrders(s => s.orders);
-  const orders = allOrders.filter(o => !o.isStoreOrder);
+  const orders = allOrders.filter(o => o.isStoreOrder);
 
   // Fallback to empty state or render the list
   if (orders.length === 0) {
     return (
       <View style={[styles.container, { alignItems: 'center', justifyContent: 'center' }]}>
         <View style={[styles.header, { paddingTop: TOP, position: 'absolute', top: 0, left: 0, right: 0 }]}>
-          <Pressable onPress={() => router.navigate('/(customer)/profile')} style={styles.backBtn} hitSlop={12}>
+          <Pressable onPress={() => router.back()} style={styles.backBtn} hitSlop={12}>
             <Ionicons name="arrow-back" size={24} color={colors.text} />
           </Pressable>
-          <Text style={styles.headerTitle}>Order History</Text>
+          <Text style={styles.headerTitle}>Past Bulk Orders</Text>
           <View style={{ width: 40 }} />
         </View>
         <Ionicons name="receipt-outline" size={64} color="#E5E7EB" style={{ marginBottom: 16 }} />
@@ -33,10 +33,10 @@ export default function OrderHistory() {
   return (
     <View style={styles.container}>
       <View style={[styles.header, { paddingTop: TOP }]}>
-        <Pressable onPress={() => router.navigate('/(customer)/profile')} style={styles.backBtn} hitSlop={12}>
+        <Pressable onPress={() => router.back()} style={styles.backBtn} hitSlop={12}>
           <Ionicons name="arrow-back" size={24} color={colors.text} />
         </Pressable>
-        <Text style={styles.headerTitle}>Order History</Text>
+        <Text style={styles.headerTitle}>Past Bulk Orders</Text>
         <View style={{ width: 40 }} />
       </View>
 
@@ -52,7 +52,7 @@ export default function OrderHistory() {
             <Animated.View key={order.id} entering={FadeInDown.delay(i * 100).springify()}>
               <Pressable
                 style={styles.card}
-                onPress={() => router.push(`/(customer)/order/${order.id}`)}
+                onPress={() => router.push(`/(store)/order/${order.id}`)}
               >
                 <View style={styles.cardHeader}>
                   <Text style={styles.orderId}>#{order.id}</Text>
@@ -77,8 +77,8 @@ export default function OrderHistory() {
                 </View>
 
                 <View style={styles.cardFooter}>
-                  <Text style={styles.viewDetails}>View Details</Text>
-                  <Ionicons name="chevron-forward" size={16} color={colors.primary} />
+                  <Text style={styles.viewDetails}>Re-order Items</Text>
+                  <Ionicons name="refresh" size={16} color={colors.primary} />
                 </View>
               </Pressable>
             </Animated.View>

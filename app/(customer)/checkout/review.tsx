@@ -3,10 +3,11 @@ import { View, Text, StyleSheet, ScrollView, Pressable, Platform, StatusBar, Act
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import Animated, { FadeInDown, FadeIn } from 'react-native-reanimated';
-import { colors, spacing, typography, radius } from '../../src/theme';
-import { useShop, selectTotal } from '../../src/store/cartStore';
-import { PRODUCTS, fmt } from '../../src/data/products';
-import { useOrders } from '../../src/store/orderStore';
+import { colors, spacing, typography, radius } from '../../../src/theme';
+import { useShop, selectTotal } from '../../../src/store/cartStore';
+import { PRODUCTS, fmt } from '../../../src/data/products';
+import { useOrders } from '../../../src/store/orderStore';
+import { useAddresses } from '../../../src/store/addressStore';
 
 const TOP = Platform.OS === 'android' ? (StatusBar.currentHeight ?? 24) : 44;
 
@@ -14,7 +15,9 @@ export default function CheckoutReview() {
   const router = useRouter();
   const { cart, clear } = useShop();
   const total = useShop(selectTotal);
+
   const addOrder = useOrders(s => s.addOrder);
+  const addresses = useAddresses(s => s.addresses);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const cartItems = Object.entries(cart).map(([id, qty]) => {
@@ -30,11 +33,20 @@ export default function CheckoutReview() {
         price: item.product.price,
         qty: item.qty
       }));
-      const orderId = addOrder({ items: orderItems, total });
-      
+
+      const selectedAddress = addresses[0]; // Assuming first is selected for now
+
+      const orderId = addOrder({
+        items: orderItems,
+        total,
+        address: selectedAddress,
+        paymentMethod: 'Cash on Delivery',
+        isStoreOrder: false
+      });
+
       clear();
       setIsSubmitting(false);
-      router.push({ pathname: '/checkout/success', params: { id: orderId } });
+      router.push({ pathname: '/(customer)/checkout/success', params: { id: orderId } });
     }, 1500); // Simulate network request for order creation
   };
 
@@ -61,12 +73,12 @@ export default function CheckoutReview() {
       </View>
 
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        
+
         <Animated.View entering={FadeInDown.delay(100).springify()}>
           <View style={styles.card}>
             <View style={styles.cardHeader}>
               <Text style={styles.cardTitle}>Shipping To</Text>
-              <Pressable onPress={() => router.push('/checkout/address')} hitSlop={8}>
+              <Pressable onPress={() => router.push('/(customer)/checkout/address')} hitSlop={8}>
                 <Text style={styles.editBtn}>Edit</Text>
               </Pressable>
             </View>
@@ -81,7 +93,7 @@ export default function CheckoutReview() {
           <View style={styles.card}>
             <View style={styles.cardHeader}>
               <Text style={styles.cardTitle}>Payment & Delivery</Text>
-              <Pressable onPress={() => router.push('/checkout/payment')} hitSlop={8}>
+              <Pressable onPress={() => router.push('/(customer)/checkout/payment')} hitSlop={8}>
                 <Text style={styles.editBtn}>Edit</Text>
               </Pressable>
             </View>
@@ -160,7 +172,7 @@ const styles = StyleSheet.create({
   },
   backBtn: { width: 40, height: 40, justifyContent: 'center', alignItems: 'flex-start' },
   headerTitle: { ...typography.h3, color: colors.text, fontWeight: '800' },
-  
+
   progressRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingVertical: spacing.md, paddingHorizontal: spacing.xl, backgroundColor: '#FFFFFF' },
   stepActive: { width: 24, height: 24, borderRadius: 12, backgroundColor: colors.primary, alignItems: 'center', justifyContent: 'center' },
   stepTextActive: { color: '#FFFFFF', fontSize: 12, fontWeight: '700' },
@@ -182,10 +194,10 @@ const styles = StyleSheet.create({
   cardHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: spacing.md },
   cardTitle: { ...typography.h3, fontWeight: '800', color: colors.text },
   editBtn: { color: colors.primary, fontWeight: '700', fontSize: 14 },
-  
+
   boldText: { ...typography.body, fontWeight: '700', color: colors.text, marginBottom: 4 },
   grayText: { fontSize: 13, color: colors.textSecondary, marginBottom: 2 },
-  
+
   rowLine: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 4 },
 
   itemRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 12 },

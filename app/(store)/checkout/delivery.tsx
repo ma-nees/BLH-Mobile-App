@@ -1,22 +1,20 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, Pressable, Platform, StatusBar, Image } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Pressable, Platform, StatusBar } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import Animated, { FadeInDown } from 'react-native-reanimated';
-import { colors, spacing, typography, radius } from '../../src/theme';
+import { colors, spacing, typography, radius } from '../../../src/theme';
 
 const TOP = Platform.OS === 'android' ? (StatusBar.currentHeight ?? 24) : 44;
 
-const PAYMENT_METHODS = [
-  { id: 'cod', name: 'Cash on Delivery', desc: 'Pay when you receive the order' },
-  { id: 'esewa', name: 'eSewa', desc: 'Pay securely via eSewa' },
-  { id: 'khalti', name: 'Khalti', desc: 'Pay securely via Khalti' },
-  { id: 'bank', name: 'Bank Transfer', desc: 'Direct bank transfer' },
+const DELIVERY_OPTIONS = [
+  { id: 'standard', name: 'Standard Delivery', time: '2-3 Business Days', price: 0, desc: 'Free delivery for all orders' },
+  { id: 'express', name: 'Express Delivery', time: 'Tomorrow by 9 PM', price: 150, desc: 'Fastest delivery option available' },
 ];
 
-export default function CheckoutPayment() {
+export default function CheckoutDelivery() {
   const router = useRouter();
-  const [selected, setSelected] = useState(PAYMENT_METHODS[0].id);
+  const [selected, setSelected] = useState(DELIVERY_OPTIONS[0].id);
 
   return (
     <View style={styles.container}>
@@ -25,7 +23,7 @@ export default function CheckoutPayment() {
         <Pressable onPress={() => router.back()} style={styles.backBtn} hitSlop={12}>
           <Ionicons name="arrow-back" size={24} color={colors.text} />
         </Pressable>
-        <Text style={styles.headerTitle}>Payment Method</Text>
+        <Text style={styles.headerTitle}>Delivery Method</Text>
         <View style={{ width: 40 }} />
       </View>
 
@@ -33,21 +31,21 @@ export default function CheckoutPayment() {
       <View style={styles.progressRow}>
         <View style={styles.stepDone}><Ionicons name="checkmark" size={16} color="#FFF" /></View>
         <View style={styles.stepLineDone} />
-        <View style={styles.stepDone}><Ionicons name="checkmark" size={16} color="#FFF" /></View>
-        <View style={styles.stepLineDone} />
-        <View style={styles.stepActive}><Text style={styles.stepTextActive}>3</Text></View>
+        <View style={styles.stepActive}><Text style={styles.stepTextActive}>2</Text></View>
+        <View style={styles.stepLine} />
+        <View style={styles.stepInactive}><Text style={styles.stepTextInactive}>3</Text></View>
         <View style={styles.stepLine} />
         <View style={styles.stepInactive}><Text style={styles.stepTextInactive}>4</Text></View>
       </View>
 
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        {PAYMENT_METHODS.map((method, i) => {
-          const isSel = selected === method.id;
+        {DELIVERY_OPTIONS.map((opt, i) => {
+          const isSel = selected === opt.id;
           return (
-            <Animated.View key={method.id} entering={FadeInDown.delay(i * 100).springify()}>
+            <Animated.View key={opt.id} entering={FadeInDown.delay(i * 100).springify()}>
               <Pressable
                 style={[styles.card, isSel && styles.cardActive]}
-                onPress={() => setSelected(method.id)}
+                onPress={() => setSelected(opt.id)}
               >
                 <View style={styles.cardHeader}>
                   <View style={styles.radioRow}>
@@ -55,11 +53,19 @@ export default function CheckoutPayment() {
                       {isSel && <View style={styles.radioDot} />}
                     </View>
                     <View>
-                      <Text style={styles.cardTitle}>{method.name}</Text>
-                      {isSel && <Text style={styles.descText}>{method.desc}</Text>}
+                      <Text style={styles.cardTitle}>{opt.name}</Text>
+                      <Text style={styles.timeText}>{opt.time}</Text>
                     </View>
                   </View>
+                  <Text style={styles.priceText}>
+                    {opt.price === 0 ? 'FREE' : `Rs. ${opt.price}`}
+                  </Text>
                 </View>
+                {isSel && (
+                  <View style={styles.cardBody}>
+                    <Text style={styles.descText}>{opt.desc}</Text>
+                  </View>
+                )}
               </Pressable>
             </Animated.View>
           );
@@ -68,8 +74,8 @@ export default function CheckoutPayment() {
 
       {/* Footer */}
       <View style={styles.footer}>
-        <Pressable style={styles.continueBtn} onPress={() => router.push('/checkout/review')}>
-          <Text style={styles.continueText}>Review Order</Text>
+        <Pressable style={styles.continueBtn} onPress={() => router.push('/(store)/checkout/payment')}>
+          <Text style={styles.continueText}>Continue to Payment</Text>
           <Ionicons name="arrow-forward" size={18} color="#FFFFFF" />
         </Pressable>
       </View>
@@ -112,12 +118,15 @@ const styles = StyleSheet.create({
   },
   cardActive: { borderColor: colors.primary, backgroundColor: '#F8FAFC' },
   cardHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  radioRow: { flexDirection: 'row', gap: 12 },
-  radio: { width: 20, height: 20, borderRadius: 10, borderWidth: 2, borderColor: colors.textSecondary, alignItems: 'center', justifyContent: 'center', marginTop: 2 },
+  radioRow: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+  radio: { width: 20, height: 20, borderRadius: 10, borderWidth: 2, borderColor: colors.textSecondary, alignItems: 'center', justifyContent: 'center' },
   radioActive: { borderColor: colors.primary },
   radioDot: { width: 10, height: 10, borderRadius: 5, backgroundColor: colors.primary },
   cardTitle: { ...typography.body, fontWeight: '700', color: colors.text },
-  descText: { color: colors.textSecondary, fontSize: 13, lineHeight: 18, marginTop: 4 },
+  timeText: { fontSize: 12, color: colors.textSecondary, marginTop: 2 },
+  priceText: { fontSize: 14, fontWeight: '800', color: colors.text },
+  cardBody: { paddingLeft: 32, marginTop: 8 },
+  descText: { color: colors.textSecondary, fontSize: 13, lineHeight: 18 },
 
   footer: {
     position: 'absolute',

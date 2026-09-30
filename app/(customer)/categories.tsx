@@ -73,7 +73,7 @@ export default function Categories() {
   const [isLoading, setIsLoading] = useState(true);
 
   React.useEffect(() => {
-    const t = setTimeout(() => setIsLoading(false), 1200);
+    const t = setTimeout(() => setIsLoading(false), 300);
     return () => clearTimeout(t);
   }, []);
 

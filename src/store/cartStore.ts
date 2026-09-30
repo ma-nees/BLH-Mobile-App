@@ -8,6 +8,7 @@ type ShopState = {
   favs: Record<string, boolean>;
   add: (id: string) => void;
   dec: (id: string) => void;
+  setQty: (id: string, qty: number) => void;
   remove: (id: string) => void;
   clear: () => void;
   toggleFav: (id: string) => void;
@@ -19,6 +20,12 @@ export const useShop = create<ShopState>()(
       cart: {},
       favs: {},
       add: (id) => set((s) => ({ cart: { ...s.cart, [id]: (s.cart[id] ?? 0) + 1 } })),
+      setQty: (id, qty) => set((s) => {
+        const cart = { ...s.cart };
+        if (qty <= 0) delete cart[id];
+        else cart[id] = qty;
+        return { cart };
+      }),
       dec: (id) =>
         set((s) => {
           const q = (s.cart[id] ?? 0) - 1;
@@ -48,6 +55,9 @@ export const selectCount = (s: ShopState) =>
 
 export const selectTotal = (s: ShopState) =>
   PRODUCTS.reduce((sum, p) => sum + p.price * (s.cart[p.id] ?? 0), 0);
+
+export const selectWholesaleTotal = (s: ShopState) =>
+  PRODUCTS.reduce((sum, p) => sum + p.wholesalePrice * (s.cart[p.id] ?? 0), 0);
 
 export const selectFavCount = (s: ShopState) =>
   Object.values(s.favs).filter(Boolean).length;

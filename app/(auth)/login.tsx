@@ -296,7 +296,19 @@ export default function Login() {
       flicker();
     } else {
       setUser(data.user);
-      router.replace('/(customer)/home');
+      const userEmail = data.user.email?.toLowerCase() || email.toLowerCase();
+      
+      if (userEmail === 'admin@blh.com') {
+        router.replace('/(admin)/dashboard');
+      } else if (userEmail === 'store@blh.com') {
+        router.replace('/(store)/dashboard');
+      } else if (userEmail === 'pending@blh.com') {
+        router.replace('/(store)/pending');
+      } else if (userEmail === 'rejected@blh.com') {
+        router.replace('/(store)/rejected');
+      } else {
+        router.replace('/(customer)/home');
+      }
     }
     setLoading(false);
   };

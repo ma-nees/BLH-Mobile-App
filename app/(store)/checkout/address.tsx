@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, Pressable, Platform, StatusBar, Modal, TextInput } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Pressable, Platform, StatusBar, Modal, TextInput, KeyboardAvoidingView } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import Animated, { FadeInDown } from 'react-native-reanimated';
-import { colors, spacing, typography, radius } from '../../src/theme';
-import { useAddresses, Address } from '../../src/store/addressStore';
+import { colors, spacing, typography, radius } from '../../../src/theme';
+import { useAddresses, Address } from '../../../src/store/addressStore';
 
 const TOP = Platform.OS === 'android' ? (StatusBar.currentHeight ?? 24) : 44;
 
@@ -97,7 +97,7 @@ export default function CheckoutAddress() {
         <Pressable
           style={[styles.continueBtn, !selected && { opacity: 0.5 }]}
           disabled={!selected}
-          onPress={() => router.push('/checkout/delivery')}
+          onPress={() => router.push('/(store)/checkout/delivery')}
         >
           <Text style={styles.continueText}>Continue to Delivery</Text>
           <Ionicons name="arrow-forward" size={18} color="#FFFFFF" />
@@ -105,35 +105,53 @@ export default function CheckoutAddress() {
       </View>
 
       {/* Add Address Modal */}
-      <Modal visible={isAdding} transparent animationType="slide">
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
+      {/* Add Address Modal */}
+      <Modal visible={isAdding} transparent animationType="fade">
+        <KeyboardAvoidingView 
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+          style={styles.modalOverlay}
+        >
+          <View style={styles.modalOverlayBg} />
+          
+          <Animated.View style={styles.modalContent}>
             <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>New Address</Text>
-              <Pressable onPress={() => setIsAdding(false)} hitSlop={12}>
-                <Ionicons name="close" size={24} color={colors.text} />
+              <Text style={styles.modalTitle}>Add New Address</Text>
+              <Pressable onPress={() => setIsAdding(false)} hitSlop={12} style={styles.closeBtn}>
+                <Ionicons name="close" size={22} color={colors.textSecondary} />
               </Pressable>
             </View>
-            <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.modalScroll}>
-              <Text style={styles.inputLabel}>Full Name</Text>
-              <TextInput style={styles.input} placeholder="John Deo " value={newName} onChangeText={setNewName} />
+            <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.modalScroll} keyboardShouldPersistTaps="handled">
+              
+              <View style={styles.inputGroup}>
+                <Text style={styles.inputLabel}>Full Name</Text>
+                <TextInput style={styles.input} placeholder="e.g., John Doe" placeholderTextColor={colors.textSecondary + '80'} value={newName} onChangeText={setNewName} />
+              </View>
 
-              <Text style={styles.inputLabel}>Phone Number</Text>
-              <TextInput style={styles.input} placeholder="+977 980-0000000" value={newPhone} onChangeText={setNewPhone} keyboardType="phone-pad" />
+              <View style={styles.inputGroup}>
+                <Text style={styles.inputLabel}>Phone Number</Text>
+                <TextInput style={styles.input} placeholder="+977 980-0000000" placeholderTextColor={colors.textSecondary + '80'} value={newPhone} onChangeText={setNewPhone} keyboardType="phone-pad" />
+              </View>
 
-              <Text style={styles.inputLabel}>Street Address</Text>
-              <TextInput style={styles.input} placeholder="123 Main Street, Phase 1" value={newStreet} onChangeText={setNewStreet} />
+              <View style={styles.inputGroup}>
+                <Text style={styles.inputLabel}>Street Address</Text>
+                <TextInput style={[styles.input, { height: 80 }]} placeholder="123 Main Street, Phase 1" placeholderTextColor={colors.textSecondary + '80'} value={newStreet} onChangeText={setNewStreet} multiline textAlignVertical="top" />
+              </View>
 
-              <Text style={styles.inputLabel}>City</Text>
-              <TextInput style={styles.input} placeholder="Bhairahawa" value={newCity} onChangeText={setNewCity} />
+              <View style={styles.inputGroup}>
+                <Text style={styles.inputLabel}>City / Town</Text>
+                <TextInput style={styles.input} placeholder="e.g., Bhairahawa" placeholderTextColor={colors.textSecondary + '80'} value={newCity} onChangeText={setNewCity} />
+              </View>
+              
             </ScrollView>
+            
             <View style={styles.modalFooter}>
               <Pressable style={styles.saveBtn} onPress={handleSaveAddress}>
                 <Text style={styles.saveBtnText}>Save Address</Text>
+                <Ionicons name="checkmark" size={18} color="#FFFFFF" />
               </Pressable>
             </View>
-          </View>
-        </View>
+          </Animated.View>
+        </KeyboardAvoidingView>
       </Modal>
     </View>
   );
@@ -221,55 +239,83 @@ const styles = StyleSheet.create({
 
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)',
     justifyContent: 'flex-end',
+  },
+  modalOverlayBg: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0,0,0,0.6)',
   },
   modalContent: {
     backgroundColor: '#FFFFFF',
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
-    height: '80%',
-    paddingBottom: Platform.OS === 'ios' ? 34 : 20,
+    borderTopLeftRadius: 28,
+    borderTopRightRadius: 28,
+    maxHeight: '90%',
+    paddingBottom: Platform.OS === 'ios' ? 34 : 24,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: -4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 20,
+    elevation: 20,
   },
   modalHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: spacing.xl,
+    paddingHorizontal: spacing.xl,
+    paddingTop: spacing.xl,
+    paddingBottom: spacing.lg,
     borderBottomWidth: 1,
-    borderBottomColor: colors.border,
+    borderBottomColor: 'rgba(0,0,0,0.04)',
   },
-  modalTitle: { ...typography.h3, fontWeight: '800', color: colors.text },
+  modalTitle: { ...typography.h3, fontWeight: '800', color: colors.text, letterSpacing: -0.5 },
+  closeBtn: {
+    width: 36, height: 36, borderRadius: 18,
+    backgroundColor: '#F3F4F6',
+    alignItems: 'center', justifyContent: 'center',
+  },
   modalScroll: {
     padding: spacing.xl,
   },
+  inputGroup: {
+    marginBottom: spacing.lg,
+  },
   inputLabel: {
     fontSize: 13,
-    color: colors.textSecondary,
-    fontWeight: '600',
+    color: colors.text,
+    fontWeight: '700',
     marginBottom: 8,
+    marginLeft: 4,
   },
   input: {
-    height: 48,
+    minHeight: 52,
     backgroundColor: '#F9FAFB',
-    borderRadius: radius.md,
+    borderRadius: radius.lg,
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: '#E5E7EB',
     paddingHorizontal: 16,
-    marginBottom: 20,
+    paddingTop: 16,
+    paddingBottom: 16,
     color: colors.text,
+    fontSize: 15,
+    fontWeight: '500',
   },
   modalFooter: {
-    padding: spacing.lg,
-    borderTopWidth: 1,
-    borderTopColor: colors.border,
+    paddingHorizontal: spacing.xl,
+    paddingTop: spacing.md,
   },
   saveBtn: {
     backgroundColor: colors.primary,
-    height: 52,
+    flexDirection: 'row',
+    gap: 8,
+    height: 56,
     borderRadius: radius.full,
     alignItems: 'center',
     justifyContent: 'center',
+    shadowColor: colors.primary,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 12,
+    elevation: 4,
   },
-  saveBtnText: { color: '#FFFFFF', fontWeight: '800', fontSize: 16 },
+  saveBtnText: { color: '#FFFFFF', fontWeight: '800', fontSize: 16, letterSpacing: 0.5 },
 });

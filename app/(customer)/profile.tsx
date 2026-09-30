@@ -18,7 +18,7 @@ import { supabase } from '../../src/lib/supabase';
 import { useAuthStore } from '../../src/store/authStore';
 import { useShop, selectCount, selectFavCount } from '../../src/store/cartStore';
 
-const TOP = Platform.OS === 'android' ? (StatusBar.currentHeight ?? 24) : 32;
+const TOP = Platform.OS === 'android' ? (StatusBar.currentHeight ?? 24) - 10 : 20;
 
 type MenuItem = {
   icon: string;
@@ -53,12 +53,12 @@ export default function Profile() {
   const account: MenuItem[] = [
     { icon: 'receipt-outline', label: 'My Orders', hint: 'Track and reorder', color: '#3B82F6', onPress: () => router.push('/(customer)/orders') },
     { icon: 'heart-outline', label: 'Wishlist', hint: `${favCount} saved`, color: '#EF4444', onPress: () => router.push('/(customer)/wishlist') },
-    { icon: 'location-outline', label: 'Saved Addresses', color: '#10B981', onPress: soon('Saved Addresses') },
-    { icon: 'card-outline', label: 'Payment Methods', color: '#8B5CF6', onPress: soon('Payment Methods') },
+    { icon: 'location-outline', label: 'Saved Addresses', color: '#10B981', onPress: () => router.push('/(customer)/saved-addresses') },
+    { icon: 'card-outline', label: 'Payment Methods', color: '#8B5CF6', onPress: () => router.push('/(customer)/payment-methods') },
   ];
 
   const support: MenuItem[] = [
-    { icon: 'help-buoy-outline', label: 'Help & Support', color: '#F59E0B', onPress: soon('Help & Support') },
+    { icon: 'help-buoy-outline', label: 'Help & Support', color: '#F59E0B', onPress: () => router.push('/(customer)/support') },
     { icon: 'document-text-outline', label: 'Terms of Service', color: '#6366F1', onPress: () => router.push('/terms') },
     { icon: 'shield-checkmark-outline', label: 'Privacy Policy', color: '#0EA5E9', onPress: () => router.push('/privacy') },
   ];
@@ -190,7 +190,7 @@ const styles = StyleSheet.create({
   hero: {
     backgroundColor: colors.primary,
     alignItems: 'center',
-    paddingBottom: 80,
+    paddingBottom: 56, // reduced from 80
     paddingHorizontal: spacing.lg,
     borderBottomLeftRadius: 40,
     borderBottomRightRadius: 40,
@@ -215,30 +215,30 @@ const styles = StyleSheet.create({
     left: -40,
   },
   avatar: {
-    width: 92,
-    height: 92,
-    borderRadius: 46,
+    width: 80, // reduced from 92
+    height: 80,
+    borderRadius: 40,
     backgroundColor: '#FFFFFF',
     alignItems: 'center',
     justifyContent: 'center',
-    borderWidth: 4,
+    borderWidth: 3, // slightly thinner border
     borderColor: 'rgba(255,255,255,0.35)',
-    marginBottom: spacing.md,
+    marginBottom: spacing.sm, // reduced from md
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.15,
     shadowRadius: 16,
     elevation: 8,
   },
-  avatarText: { fontSize: 34, fontWeight: '800', color: colors.primary },
-  name: { ...typography.h2, color: '#FFFFFF', fontWeight: '800', textAlign: 'center' },
+  avatarText: { fontSize: 30, fontWeight: '800', color: colors.primary }, // slightly smaller
+  name: { ...typography.h3, color: '#FFFFFF', fontWeight: '800', textAlign: 'center' }, // h3 instead of h2
   email: { ...typography.body, color: 'rgba(255,255,255,0.78)', marginTop: 2 },
 
   stats: {
     flexDirection: 'row',
     alignItems: 'center',
     marginHorizontal: spacing.lg,
-    marginTop: -44,
+    marginTop: -28, // adjusted from -44
     backgroundColor: '#FFFFFF',
     borderRadius: radius.xl,
     paddingVertical: spacing.md,

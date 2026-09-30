@@ -17,6 +17,9 @@ export type Order = {
   items: OrderItem[];
   total: number;
   status: OrderStatus;
+  address?: any; // To store Address snapshot
+  paymentMethod?: string;
+  isStoreOrder?: boolean;
 };
 
 type OrderState = {

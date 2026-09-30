@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, Pressable, Platform, StatusBar } from 'react-na
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import Animated, { FadeInDown, ZoomIn } from 'react-native-reanimated';
-import { colors, spacing, typography, radius } from '../../src/theme';
+import { colors, spacing, typography, radius } from '../../../src/theme';
 
 const TOP = Platform.OS === 'android' ? (StatusBar.currentHeight ?? 24) : 44;
 

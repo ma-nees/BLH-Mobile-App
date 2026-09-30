@@ -23,6 +23,7 @@ import Animated, {
   FadeInDown,
   FadeInRight,
   SlideInDown,
+  SlideInUp,
   SlideOutDown,
   useAnimatedScrollHandler,
   useSharedValue,
@@ -53,9 +54,9 @@ const BANNERS = [
 ];
 
 const TRUST = [
-  { icon: 'shield-checkmark-outline', label: 'Genuine\nProducts' },
-  { icon: 'flash-outline', label: 'Fast\nDelivery' },
-  { icon: 'refresh-outline', label: 'Easy\nReturns' },
+  { icon: 'shield-checkmark-outline', label: 'Genuine Products' },
+  { icon: 'flash-outline', label: 'Fast Delivery' },
+  { icon: 'refresh-outline', label: 'Easy Returns' },
 ];
 const pad = (n: number) => n.toString().padStart(2, '0');
 
@@ -94,7 +95,7 @@ function HomeSkeleton() {
       </View>
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         <Skeleton width="100%" height={168} borderRadius={24} style={{ marginBottom: spacing.xl }} />
-        
+
         <Skeleton width={140} height={24} style={{ marginBottom: spacing.md }} />
         <View style={[styles.catRow, { flexDirection: 'row', overflow: 'hidden' }]}>
           {[1, 2, 3, 4, 5].map((i) => (
@@ -108,14 +109,14 @@ function HomeSkeleton() {
         <Skeleton width={160} height={24} style={{ marginTop: spacing.xl, marginBottom: spacing.md }} />
         <View style={styles.grid}>
           {[1, 2, 3, 4].map((i) => (
-            <View key={i} style={[styles.productCard, { width: CARD_W, paddingBottom: 10 }]}>
+            <View key={i} style={[styles.productCard, { width: CARD_W }]}>
               <Skeleton width="100%" height={128} borderRadius={0} />
-              <View style={{ padding: 10 }}>
+              <View style={{ padding: 12 }}>
                 <Skeleton width={60} height={10} style={{ marginBottom: 8 }} />
                 <Skeleton width="100%" height={14} style={{ marginBottom: 4 }} />
                 <Skeleton width="80%" height={14} style={{ marginBottom: 12 }} />
-                <Skeleton width={70} height={18} style={{ marginBottom: 14 }} />
-                <Skeleton width="100%" height={34} borderRadius={10} />
+                <Skeleton width={70} height={18} style={{ marginBottom: 16 }} />
+                <Skeleton width="100%" height={36} borderRadius={10} />
               </View>
             </View>
           ))}
@@ -189,8 +190,8 @@ function ProductCard({
         </View>
 
         {qty === 0 ? (
-          <Pressable style={styles.addBtn} onPress={onAdd}>
-            <Text style={styles.addBtnText}>ADD</Text>
+          <Pressable style={({ pressed }) => [styles.addBtn, pressed && { opacity: 0.8 }]} onPress={onAdd}>
+            <Text style={styles.addBtnText}>Add to cart</Text>
           </Pressable>
         ) : (
           <Stepper value={qty} onAdd={onAdd} onDec={onDec} size="md" />
@@ -236,8 +237,8 @@ export default function CustomerHome() {
 
   // Auto-advance banners
   useEffect(() => {
-    // Simulate network delay for skeleton loading
-    const loader = setTimeout(() => setIsLoading(false), 1500);
+    // Simulate fast network for skeleton loading
+    const loader = setTimeout(() => setIsLoading(false), 300);
 
     if (browsing) return () => clearTimeout(loader);
     idxRef.current = 0;
@@ -286,7 +287,7 @@ export default function CustomerHome() {
   }));
 
   const topStyle = useAnimatedStyle(() => ({
-    height: interpolate(scrollY.value, [0, 60], [36, 0], 'clamp'),
+    height: interpolate(scrollY.value, [0, 60], [44, 0], 'clamp'),
     opacity: interpolate(scrollY.value, [0, 40], [1, 0], 'clamp'),
     marginBottom: interpolate(scrollY.value, [0, 60], [spacing.md, 0], 'clamp'),
     overflow: 'hidden',
@@ -303,11 +304,15 @@ export default function CustomerHome() {
       {/* Header */}
       <Animated.View style={[styles.header, { paddingTop: TOP_PADDING }, headerStyle]}>
         <Animated.View style={[styles.headerTop, topStyle]}>
-          <Animated.View entering={FadeIn.delay(100)} style={{ flex: 1 }}>
-            <Text style={styles.greeting}>
-              {greeting()}, <Text style={styles.greetingName}>{firstName}</Text>
-            </Text>
-          </Animated.View>
+          <View style={styles.headerLeft}>
+            <Pressable style={styles.avatar} onPress={() => router.navigate('/(customer)/profile')}>
+              <Text style={styles.avatarText}>{firstName.charAt(0).toUpperCase()}</Text>
+            </Pressable>
+            <Animated.View entering={FadeIn.delay(100)}>
+              <Text style={styles.greetingSmall}>{greeting()}</Text>
+              <Text style={styles.greetingName}>{firstName}</Text>
+            </Animated.View>
+          </View>
 
           <View style={styles.locationWrap}>
             <Ionicons name="location" size={14} color={colors.primary} />
@@ -421,11 +426,16 @@ export default function CustomerHome() {
 
         {/* Flash deals */}
         {!browsing && (
-          <Animated.View entering={FadeInDown.delay(500).springify()} style={styles.section}>
+          <Animated.View entering={FadeInDown.delay(500).springify()} style={[styles.section, styles.flashSection]}>
             <View style={styles.sectionHeader}>
               <View style={styles.flashTitleWrap}>
-                <Ionicons name="flash" size={20} color="#F59E0B" />
-                <Text style={styles.sectionTitleInline}>Flash Deals</Text>
+                <View style={styles.flashIconWrap}>
+                  <Ionicons name="flash" size={18} color="#FFFFFF" />
+                </View>
+                <View>
+                  <Text style={styles.sectionTitleInline}>Flash Deals</Text>
+                  <Text style={styles.flashSub}>Ends today</Text>
+                </View>
               </View>
               <View style={styles.timer}>
                 {[time.h, time.m, time.s].map((v, i) => (
@@ -563,9 +573,23 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: spacing.md,
   },
-  locationWrap: { 
-    flexDirection: 'row', 
-    alignItems: 'center', 
+  headerLeft: { flexDirection: 'row', alignItems: 'center', gap: 10, flex: 1 },
+  avatar: {
+    width: 42,
+    height: 42,
+    borderRadius: 21,
+    backgroundColor: colors.primary + '15',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: colors.primary + '30',
+  },
+  avatarText: { color: colors.primary, fontSize: 18, fontWeight: '800' },
+  greetingSmall: { ...typography.caption, color: colors.textSecondary, fontWeight: '600' },
+  greetingName: { ...typography.subtitle, color: colors.text, fontWeight: '800' },
+  locationWrap: {
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: 4,
     backgroundColor: '#F3F4F6',
     paddingHorizontal: 12,
@@ -573,8 +597,6 @@ const styles = StyleSheet.create({
     borderRadius: 16,
   },
   deliverPlace: { ...typography.caption, color: colors.primary, fontWeight: '700' },
-  greeting: { ...typography.h3, color: colors.textSecondary, fontWeight: '600' },
-  greetingName: { color: colors.text, fontWeight: '800' },
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -582,6 +604,8 @@ const styles = StyleSheet.create({
     borderRadius: radius.lg,
     paddingHorizontal: spacing.md,
     height: 52,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
   },
   searchIcon: { marginRight: spacing.sm },
   searchInput: { flex: 1, ...typography.body, height: '100%', color: colors.text },
@@ -643,19 +667,37 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     backgroundColor: '#FFFFFF',
     borderRadius: radius.lg,
-    paddingVertical: spacing.md,
-    marginBottom: spacing.xl,
+    paddingVertical: spacing.sm,
+    marginBottom: spacing.md,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.04,
-    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.03,
+    shadowRadius: 8,
     elevation: 2,
   },
-  trustItem: { alignItems: 'center', gap: 4 },
-  trustText: { ...typography.caption, color: colors.textSecondary, fontSize: 11, textAlign: 'center', fontWeight: '600' },
+  trustItem: { flexDirection: 'row', alignItems: 'center', gap: 6 },
+  trustText: { ...typography.caption, color: colors.textSecondary, fontSize: 10, fontWeight: '700' },
 
   // Flash
-  flashTitleWrap: { flexDirection: 'row', alignItems: 'center', gap: 6 },
+  flashSection: {
+    backgroundColor: '#FFF8F0',
+    padding: spacing.md,
+    marginHorizontal: -H_PAD,
+    paddingHorizontal: H_PAD,
+    borderTopWidth: 1,
+    borderBottomWidth: 1,
+    borderColor: '#FDE6C4',
+  },
+  flashTitleWrap: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  flashIconWrap: {
+    width: 32,
+    height: 32,
+    borderRadius: 10,
+    backgroundColor: '#F59E0B',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  flashSub: { fontSize: 11, color: colors.textSecondary, fontWeight: '600' },
   timer: { flexDirection: 'row', alignItems: 'center', gap: 3 },
   timerBox: {
     backgroundColor: '#111827',
@@ -675,21 +717,23 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     borderRadius: radius.lg,
     overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: '#F3F4F6',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.05,
-    shadowRadius: 12,
-    elevation: 3,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.02,
+    shadowRadius: 8,
+    elevation: 2,
   },
-  productImage: { width: '100%', height: 128, backgroundColor: '#F3F4F6' },
+  productImage: { width: '100%', height: 128, backgroundColor: '#F9FAFB' },
   offBadge: {
     position: 'absolute',
     top: 8,
     left: 8,
-    backgroundColor: '#16A34A',
-    paddingHorizontal: 7,
-    paddingVertical: 3,
-    borderRadius: 6,
+    backgroundColor: '#EF4444',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 8,
   },
   offText: { color: '#FFFFFF', fontSize: 10, fontWeight: '800' },
   favBtn: {
@@ -702,45 +746,50 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.95)',
     alignItems: 'center',
     justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    elevation: 2,
   },
   tagBadge: {
     position: 'absolute',
-    bottom: 8,
+    bottom: -10,
     left: 8,
-    backgroundColor: 'rgba(17,24,39,0.85)',
+    backgroundColor: colors.primary,
     paddingHorizontal: 8,
-    paddingVertical: 3,
+    paddingVertical: 4,
     borderRadius: 6,
+    zIndex: 2,
   },
-  tagText: { color: '#FFD54A', fontSize: 10, fontWeight: '800' },
-  productInfo: { padding: 10 },
-  productCategory: { fontSize: 9, letterSpacing: 0.8, color: colors.textSecondary, fontWeight: '700', marginBottom: 2 },
-  productName: { ...typography.caption, color: colors.text, fontWeight: '700', minHeight: 34 },
-  ratingRow: { flexDirection: 'row', alignItems: 'center', gap: 5, marginTop: 4 },
+  tagText: { color: '#FFFFFF', fontSize: 9, fontWeight: '800', letterSpacing: 0.5 },
+  productInfo: { padding: 12, paddingTop: 16 },
+  productCategory: { fontSize: 9, letterSpacing: 1, color: colors.textSecondary, fontWeight: '700', marginBottom: 4 },
+  productName: { ...typography.caption, color: colors.text, fontWeight: '700', minHeight: 36, lineHeight: 18 },
+  ratingRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 4 },
   ratingPill: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 3,
-    backgroundColor: '#16A34A',
+    backgroundColor: '#F59E0B',
     paddingHorizontal: 6,
     paddingVertical: 2,
     borderRadius: 6,
   },
   ratingPillText: { color: '#FFFFFF', fontSize: 10, fontWeight: '800' },
-  reviewsText: { fontSize: 10, color: colors.textSecondary },
-  priceRow: { flexDirection: 'row', alignItems: 'baseline', gap: 6, marginTop: 6, marginBottom: 8 },
+  reviewsText: { fontSize: 11, color: colors.textSecondary },
+  priceRow: { flexDirection: 'row', alignItems: 'baseline', gap: 6, marginTop: 8, marginBottom: 12 },
   productPrice: { ...typography.body, color: colors.text, fontWeight: '800' },
-  productMrp: { fontSize: 11, color: colors.textSecondary, textDecorationLine: 'line-through' },
+  productMrp: { fontSize: 12, color: colors.textSecondary, textDecorationLine: 'line-through' },
 
   addBtn: {
-    height: 34,
-    borderRadius: 10,
-    borderWidth: 1.5,
-    borderColor: colors.primary,
+    height: 36,
+    borderRadius: 12,
+    backgroundColor: colors.primary,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  addBtnText: { color: colors.primary, fontWeight: '800', fontSize: 13, letterSpacing: 0.5 },
+  addBtnText: { color: '#FFFFFF', fontWeight: '800', fontSize: 13, letterSpacing: 0.5 },
   stepper: {
     height: 34,
     borderRadius: 10,
@@ -767,10 +816,10 @@ const styles = StyleSheet.create({
   emptyBtnText: { color: '#FFFFFF', fontWeight: '700' },
 
   // Floating cart bar
-  cartBar: { 
-    position: 'absolute', 
-    left: H_PAD, 
-    right: H_PAD, 
+  cartBar: {
+    position: 'absolute',
+    left: H_PAD,
+    right: H_PAD,
     bottom: 100, // Lifted above the floating nav bar
     flexDirection: 'row',
     alignItems: 'center',
@@ -818,3 +867,6 @@ const styles = StyleSheet.create({
     elevation: 8,
   },
 });
+
+
+

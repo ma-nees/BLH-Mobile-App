@@ -123,7 +123,9 @@ export default function Cart() {
 
       {items.length === 0 ? (
         <Animated.View entering={FadeIn} style={styles.empty}>
-          <Ionicons name="cart-outline" size={64} color={colors.textSecondary} style={{ marginBottom: spacing.md }} />
+          <View style={styles.emptyCircle}>
+            <Ionicons name="cart-outline" size={54} color={colors.primary} />
+          </View>
           <Text style={styles.emptyTitle}>Your cart is empty</Text>
           <Text style={styles.emptyText}>Add bulbs, wires or switches to get started.</Text>
           <View style={{ height: spacing.lg }} />
@@ -217,25 +219,6 @@ export default function Cart() {
               )}
             </View>
 
-            {/* Delivery + payment */}
-            <View style={styles.card}>
-              <View style={styles.infoRow}>
-                <Ionicons name="location-outline" size={20} color={colors.primary} />
-                <View style={{ flex: 1 }}>
-                  <Text style={styles.infoLabel}>Deliver to</Text>
-                  <Text style={styles.infoValue}>Bhairahawa</Text>
-                </View>
-              </View>
-              <View style={styles.divider} />
-              <View style={styles.infoRow}>
-                <Ionicons name="cash-outline" size={20} color={colors.primary} />
-                <View style={{ flex: 1 }}>
-                  <Text style={styles.infoLabel}>Payment</Text>
-                  <Text style={styles.infoValue}>Cash on delivery</Text>
-                </View>
-              </View>
-            </View>
-
             {/* Bill */}
             <View style={styles.card}>
               <Text style={styles.cardTitle}>Bill details</Text>
@@ -262,7 +245,7 @@ export default function Cart() {
               <Text style={styles.checkoutLabel}>Total</Text>
               <Text style={styles.checkoutTotal}>{fmt(total)}</Text>
             </View>
-            <Pressable style={styles.checkoutBtn} onPress={() => router.push('/checkout/address')}>
+            <Pressable style={styles.checkoutBtn} onPress={() => router.push('/(customer)/checkout/address')}>
               <Text style={styles.checkoutBtnText}>Checkout</Text>
               <Ionicons name="arrow-forward" size={18} color={colors.primary} />
             </Pressable>
@@ -430,6 +413,15 @@ const styles = StyleSheet.create({
   checkoutBtnText: { color: colors.primary, fontWeight: '800', fontSize: 15 },
 
   empty: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: spacing.xl },
+  emptyCircle: {
+    width: 110,
+    height: 110,
+    borderRadius: 55,
+    backgroundColor: 'rgba(0,0,0,0.05)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: spacing.md,
+  },
   emptyTitle: { ...typography.h3, color: colors.text, fontWeight: '800' },
   emptyText: { ...typography.body, color: colors.textSecondary, marginTop: 4, textAlign: 'center' },
 });

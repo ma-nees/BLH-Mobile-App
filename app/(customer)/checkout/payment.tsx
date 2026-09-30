@@ -1,20 +1,22 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, Pressable, Platform, StatusBar } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Pressable, Platform, StatusBar, Image } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import Animated, { FadeInDown } from 'react-native-reanimated';
-import { colors, spacing, typography, radius } from '../../src/theme';
+import { colors, spacing, typography, radius } from '../../../src/theme';
 
 const TOP = Platform.OS === 'android' ? (StatusBar.currentHeight ?? 24) : 44;
 
-const DELIVERY_OPTIONS = [
-  { id: 'standard', name: 'Standard Delivery', time: '2-3 Business Days', price: 0, desc: 'Free delivery for all orders' },
-  { id: 'express', name: 'Express Delivery', time: 'Tomorrow by 9 PM', price: 150, desc: 'Fastest delivery option available' },
+const PAYMENT_METHODS = [
+  { id: 'cod', name: 'Cash on Delivery', desc: 'Pay when you receive the order' },
+  { id: 'esewa', name: 'eSewa', desc: 'Pay securely via eSewa' },
+  { id: 'khalti', name: 'Khalti', desc: 'Pay securely via Khalti' },
+  { id: 'bank', name: 'Bank Transfer', desc: 'Direct bank transfer' },
 ];
 
-export default function CheckoutDelivery() {
+export default function CheckoutPayment() {
   const router = useRouter();
-  const [selected, setSelected] = useState(DELIVERY_OPTIONS[0].id);
+  const [selected, setSelected] = useState(PAYMENT_METHODS[0].id);
 
   return (
     <View style={styles.container}>
@@ -23,7 +25,7 @@ export default function CheckoutDelivery() {
         <Pressable onPress={() => router.back()} style={styles.backBtn} hitSlop={12}>
           <Ionicons name="arrow-back" size={24} color={colors.text} />
         </Pressable>
-        <Text style={styles.headerTitle}>Delivery Method</Text>
+        <Text style={styles.headerTitle}>Payment Method</Text>
         <View style={{ width: 40 }} />
       </View>
 
@@ -31,21 +33,21 @@ export default function CheckoutDelivery() {
       <View style={styles.progressRow}>
         <View style={styles.stepDone}><Ionicons name="checkmark" size={16} color="#FFF" /></View>
         <View style={styles.stepLineDone} />
-        <View style={styles.stepActive}><Text style={styles.stepTextActive}>2</Text></View>
-        <View style={styles.stepLine} />
-        <View style={styles.stepInactive}><Text style={styles.stepTextInactive}>3</Text></View>
+        <View style={styles.stepDone}><Ionicons name="checkmark" size={16} color="#FFF" /></View>
+        <View style={styles.stepLineDone} />
+        <View style={styles.stepActive}><Text style={styles.stepTextActive}>3</Text></View>
         <View style={styles.stepLine} />
         <View style={styles.stepInactive}><Text style={styles.stepTextInactive}>4</Text></View>
       </View>
 
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        {DELIVERY_OPTIONS.map((opt, i) => {
-          const isSel = selected === opt.id;
+        {PAYMENT_METHODS.map((method, i) => {
+          const isSel = selected === method.id;
           return (
-            <Animated.View key={opt.id} entering={FadeInDown.delay(i * 100).springify()}>
+            <Animated.View key={method.id} entering={FadeInDown.delay(i * 100).springify()}>
               <Pressable
                 style={[styles.card, isSel && styles.cardActive]}
-                onPress={() => setSelected(opt.id)}
+                onPress={() => setSelected(method.id)}
               >
                 <View style={styles.cardHeader}>
                   <View style={styles.radioRow}>
@@ -53,19 +55,11 @@ export default function CheckoutDelivery() {
                       {isSel && <View style={styles.radioDot} />}
                     </View>
                     <View>
-                      <Text style={styles.cardTitle}>{opt.name}</Text>
-                      <Text style={styles.timeText}>{opt.time}</Text>
+                      <Text style={styles.cardTitle}>{method.name}</Text>
+                      {isSel && <Text style={styles.descText}>{method.desc}</Text>}
                     </View>
                   </View>
-                  <Text style={styles.priceText}>
-                    {opt.price === 0 ? 'FREE' : `Rs. ${opt.price}`}
-                  </Text>
                 </View>
-                {isSel && (
-                  <View style={styles.cardBody}>
-                    <Text style={styles.descText}>{opt.desc}</Text>
-                  </View>
-                )}
               </Pressable>
             </Animated.View>
           );
@@ -74,8 +68,8 @@ export default function CheckoutDelivery() {
 
       {/* Footer */}
       <View style={styles.footer}>
-        <Pressable style={styles.continueBtn} onPress={() => router.push('/checkout/payment')}>
-          <Text style={styles.continueText}>Continue to Payment</Text>
+        <Pressable style={styles.continueBtn} onPress={() => router.push('/(customer)/checkout/review')}>
+          <Text style={styles.continueText}>Review Order</Text>
           <Ionicons name="arrow-forward" size={18} color="#FFFFFF" />
         </Pressable>
       </View>
@@ -97,7 +91,7 @@ const styles = StyleSheet.create({
   },
   backBtn: { width: 40, height: 40, justifyContent: 'center', alignItems: 'flex-start' },
   headerTitle: { ...typography.h3, color: colors.text, fontWeight: '800' },
-  
+
   progressRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingVertical: spacing.md, paddingHorizontal: spacing.xl },
   stepActive: { width: 24, height: 24, borderRadius: 12, backgroundColor: colors.primary, alignItems: 'center', justifyContent: 'center' },
   stepTextActive: { color: '#FFFFFF', fontSize: 12, fontWeight: '700' },
@@ -118,15 +112,12 @@ const styles = StyleSheet.create({
   },
   cardActive: { borderColor: colors.primary, backgroundColor: '#F8FAFC' },
   cardHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  radioRow: { flexDirection: 'row', alignItems: 'center', gap: 12 },
-  radio: { width: 20, height: 20, borderRadius: 10, borderWidth: 2, borderColor: colors.textSecondary, alignItems: 'center', justifyContent: 'center' },
+  radioRow: { flexDirection: 'row', gap: 12 },
+  radio: { width: 20, height: 20, borderRadius: 10, borderWidth: 2, borderColor: colors.textSecondary, alignItems: 'center', justifyContent: 'center', marginTop: 2 },
   radioActive: { borderColor: colors.primary },
   radioDot: { width: 10, height: 10, borderRadius: 5, backgroundColor: colors.primary },
   cardTitle: { ...typography.body, fontWeight: '700', color: colors.text },
-  timeText: { fontSize: 12, color: colors.textSecondary, marginTop: 2 },
-  priceText: { fontSize: 14, fontWeight: '800', color: colors.text },
-  cardBody: { paddingLeft: 32, marginTop: 8 },
-  descText: { color: colors.textSecondary, fontSize: 13, lineHeight: 18 },
+  descText: { color: colors.textSecondary, fontSize: 13, lineHeight: 18, marginTop: 4 },
 
   footer: {
     position: 'absolute',

@@ -22,7 +22,7 @@ export default function OrderDetails() {
     return (
       <View style={[styles.container, { alignItems: 'center', justifyContent: 'center' }]}>
         <Text style={typography.h3}>Order not found</Text>
-        <Pressable onPress={() => router.navigate('/(customer)/orders')} style={{ marginTop: 16 }}>
+        <Pressable onPress={() => router.navigate('/(store)/orders')} style={{ marginTop: 16 }}>
           <Text style={{ color: colors.primary, fontWeight: '700' }}>Go back</Text>
         </Pressable>
       </View>
@@ -36,7 +36,7 @@ export default function OrderDetails() {
     <View style={styles.container}>
       {/* Header */}
       <View style={[styles.header, { paddingTop: TOP }]}>
-        <Pressable onPress={() => router.navigate('/(customer)/orders')} style={styles.backBtn} hitSlop={12}>
+        <Pressable onPress={() => router.navigate('/(store)/orders')} style={styles.backBtn} hitSlop={12}>
           <Ionicons name="arrow-back" size={24} color={colors.text} />
         </Pressable>
         <Text style={styles.headerTitle}>Order #{id}</Text>
@@ -123,11 +123,11 @@ export default function OrderDetails() {
 
         <Animated.View entering={FadeInDown.delay(300).springify()}>
           <View style={styles.actionsRow}>
-            <Pressable style={styles.outlineBtn} onPress={() => router.push(`/(customer)/invoice/${order.id}`)}>
+            <Pressable style={styles.outlineBtn} onPress={() => router.push(`/(store)/invoice/${order.id}`)}>
               <Ionicons name="document-text-outline" size={18} color={colors.primary} />
               <Text style={styles.outlineBtnText}>Invoice</Text>
             </Pressable>
-            <Pressable style={styles.primaryBtn} onPress={() => router.push('/(customer)/home')}>
+            <Pressable style={styles.primaryBtn} onPress={() => router.push('/(store)/dashboard')}>
               <Ionicons name="refresh" size={18} color="#FFF" />
               <Text style={styles.primaryBtnText}>Reorder</Text>
             </Pressable>

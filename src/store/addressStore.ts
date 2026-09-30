@@ -21,7 +21,7 @@ const INITIAL_ADDRESSES: Address[] = [
   {
     id: '1',
     type: 'Home',
-    name: 'Birendra Sahani',
+    name: 'John Deo',
     phone: '+977 980-0000000',
     street: '123 Main Street, Phase 1',
     city: 'Bhairahawa',

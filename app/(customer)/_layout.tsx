@@ -3,14 +3,14 @@ import { Ionicons } from '@expo/vector-icons';
 import { colors } from '../../src/theme';
 import { Platform } from 'react-native';
 import { useShop, selectCount, selectFavCount } from '../../src/store/cartStore';
-import { TabBar } from '../../src/components/ui/TabBar';
+import { CustomerTabBar } from '../../src/components/ui/CustomerTabBar';
 
 export default function CustomerLayout() {
   const cartCount = useShop(selectCount);
   const favCount = useShop(selectFavCount);
   return (
     <Tabs
-      tabBar={(props) => <TabBar {...props} />}
+      tabBar={(props) => <CustomerTabBar {...props} />}
       screenOptions={{
         headerShown: false,
         unmountOnBlur: true,
@@ -81,6 +81,48 @@ export default function CustomerLayout() {
       />
       <Tabs.Screen
         name="order/[id]"
+        options={{
+          href: null,
+          tabBarStyle: { display: 'none' },
+        }}
+      />
+      <Tabs.Screen
+        name="invoice/[id]"
+        options={{
+          href: null,
+          tabBarStyle: { display: 'none' },
+        }}
+      />
+      <Tabs.Screen
+        name="saved-addresses"
+        options={{
+          href: null,
+          tabBarStyle: { display: 'none' },
+        }}
+      />
+      <Tabs.Screen
+        name="payment-methods"
+        options={{
+          href: null,
+          tabBarStyle: { display: 'none' },
+        }}
+      />
+      <Tabs.Screen
+        name="support"
+        options={{
+          href: null,
+          tabBarStyle: { display: 'none' },
+        }}
+      />
+      <Tabs.Screen
+        name="checkout"
+        options={{
+          href: null,
+          tabBarStyle: { display: 'none' },
+        }}
+      />
+      <Tabs.Screen
+        name="order"
         options={{
           href: null,
           tabBarStyle: { display: 'none' },
